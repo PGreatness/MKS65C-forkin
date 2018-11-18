@@ -16,14 +16,22 @@ int main() {
     child2 = fork();
   }
 
-  if(getpid() != mainPid){
-      srand(getpid());
-      int randval = abs(rand()%16 + 5);
-      sleep(abs(rand()%16 + 5));
-      printf("%d\n" , randval );
+  int status;
+  if(getpid() == mainPid){
+    int pid = wait(&status);
+    printf("I have waited for child %d, who has been asleep for %d seconds\n", pid, WEXITSTATUS(status));
+    printf("I am the parent and I am done\n");
+    exit(0);
   }
-  printf("My pid is:%i\tMy parent's pid is: %i\n", getpid(), getppid() );
-  printf("Child1 for all: %i\n", mainPid);
+  int randval;
+  if(getpid() != mainPid){
+      printf("I am child with Pid: %d\n", getpid() );
+      srand(getpid());
+      randval = abs(rand()%16 + 5);
+      sleep(abs(rand()%16 + 5));
+      printf("I am Pid: %d, and I have finished.\n" , getpid() );
+  }
 
-  return 0;
+
+  return randval;
 }
